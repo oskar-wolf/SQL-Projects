@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="Logical_Design_(DLBDSPBDM01)" id="Project-1938" database="LogicalDesign" >
+	<comment><![CDATA[A design to deliver a functional and documented database management system tailored for the Airbnb use case.]]></comment>
+	<schema name="INSTANCE" catalogname="Logical_Design_(DLBDSPBDM01)" >
+		<table name="Accomodations" prior="Entity" >
+			<comment><![CDATA[The "Accommodations" table stores information about the available accommodations. It includes attributes such as accommodation title, description, location, amenities, and rules. The table is linked to the "Hosts" table through a foreign key relationship, indicating which host is responsible for the accommodation. It also has relationships with other entities such as bookings, reviews, photos, tags, and facilities, allowing for comprehensive management of the accommodation listings.]]></comment>
+			<column name="Accomodation_ID" type="INT" jt="4" mandatory="y" />
+			<column name="Host_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Hosts.Host_ID]]></comment>
+			</column>
+			<column name="Title" type="VARCHAR" length="500" jt="12" mandatory="y" />
+			<column name="Description" type="TEXT" jt="-1" mandatory="y" />
+			<column name="Amenities" prior="Amenity_ID" type="INT" length="500" jt="4" mandatory="y" />
+			<column name="Rules" prior="Rule_ID" type="INT" length="500" jt="4" mandatory="y" />
+			<column name="Location" prior="Location_ID" type="INT" jt="4" mandatory="y" />
+			<index name="pk_Accomodations" unique="PRIMARY_KEY" >
+				<column name="Accomodation_ID" />
+			</index>
+		</table>
+		<table name="Amenities" prior="Amen" >
+			<comment><![CDATA[The Amenities table contains a list of amenities that are offered in accommodations. Each amenity is identified by a unique Amenity_ID and is described by an Amenity_Name. This table helps users to easily find accommodations that provide specific amenities, such as Wi-Fi, parking, pool, or gym facilities.]]></comment>
+			<column name="Amenity_ID" type="INT" jt="4" mandatory="y" />
+			<column name="Amenity_Name" type="VARCHAR" length="100" jt="12" />
+			<index name="pk_Amenities" unique="PRIMARY_KEY" >
+				<column name="Amenity_ID" />
+			</index>
+		</table>
+		<table name="Booking_Extensions" prior="Booking_Extensions " >
+			<comment><![CDATA[The Booking Extensions table tracks information about extensions made to existing bookings on Airbnb. It includes details such as Extension_ID (a unique identifier for each extension), Booking_ID (the ID of the extended booking), User_ID (the ID of the user requesting the extension), Extension_Date, New_Check-out_Date, and Extension_Status (indicating the status of the extension request, e.g., pending, approved, declined).
+The Booking Extensions table enables guests to request extensions to their bookings, allowing for flexible stay arrangements. It helps hosts manage extended stays and ensures proper coordination and communication between guests and hosts regarding booking duration changes.
+
+These three tables (Payments, Cancellations, and Booking Extensions) provide Airbnb with essential information for managing payment transactions, handling booking changes and cancellations, and ensuring a smooth and efficient booking experience for both guests and hosts.]]></comment>
+			<column name="Extension_ID" type="INT" jt="4" mandatory="y" />
+			<column name="Booking_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Bookings.Booking_ID]]></comment>
+			</column>
+			<column name="New_Check-Out_Date" type="DATE" jt="91" mandatory="y" />
+			<index name="pk_Booking_Extensions" unique="PRIMARY_KEY" >
+				<column name="Extension_ID" />
+			</index>
+		</table>
+		<table name="Bookings" prior="Entity" >
+			<comment><![CDATA[The Bookings table stores information about the bookings made by guests on Airbnb. It includes details such as Booking_ID (a unique identifier for each booking), Guest_ID (the ID of the guest who made the booking), Accommodation_ID (the ID of the accommodation booked), Check-in_Date, Check-out_Date, Total_Price (the total price of the booking), and Booking_Status (indicating the status of the booking, e.g., confirmed, canceled, completed).
+
+The Bookings table helps Airbnb keep track of reservations and manage the booking process. It allows hosts to view and manage their bookings, and it provides a central repository for essential booking information. The table also enables Airbnb to generate invoices, calculate revenue, and analyze booking patterns.
+
+By maintaining the Bookings table, Airbnb can provide guests with a seamless booking experience, ensure accurate billing and payment processing, and assist hosts in managing their availability and reservations effectively. It forms a crucial component of Airbnb's booking management system, facilitating smooth interactions between guests and hosts throughout the booking lifecycle.]]></comment>
+			<column name="Booking_ID" type="INT" jt="4" mandatory="y" />
+			<column name="Guest_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Guests.Guest_ID]]></comment>
+			</column>
+			<column name="Accomodation_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Accommodations.Accommodation_ID]]></comment>
+			</column>
+			<column name="Check-in_Date" type="DATE" jt="91" mandatory="y" />
+			<column name="Check-out_Date" type="DATE" jt="91" mandatory="y" />
+			<column name="Total_Price" type="MONEY" jt="3" mandatory="y" />
+			<column name="Status" type="CHAR" length="1" jt="1" mandatory="y" />
+			<index name="pk_Bookings" unique="PRIMARY_KEY" >
+				<column name="Booking_ID" />
+			</index>
+		</table>
+		<table name="Cancellations" prior="Entity" >
+			<comment><![CDATA[The Cancellations table records information about booking cancellations on Airbnb. It includes details such as Cancellation_ID (a unique identifier for each cancellation), Booking_ID (the ID of the canceled booking), User_ID (the ID of the user who initiated the cancellation), Cancellation_Date, Reason (the reason provided for the cancellation), and Refund_Amount (the amount refunded to the guest).
+The Cancellations table helps Airbnb keep track of canceled bookings, analyze cancellation trends, and handle refund processes. It allows hosts to manage their availability and occupancy accurately, while also ensuring transparency and accountability in the booking cancellation process.]]></comment>
+			<column name="Cancellation_ID" type="INT" jt="4" mandatory="y" />
+			<column name="Booking_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Bookings.Booking_ID]]></comment>
+			</column>
+			<column name="Cancellation_Date" type="DATE" jt="91" mandatory="y" />
+			<column name="Cancellation_Reason" type="VARCHAR" length="500" jt="12" mandatory="y" />
+			<index name="pk_Cancellations" unique="PRIMARY_KEY" >
+				<column name="Cancellation_ID" />
+			</index>
+		</table>
+		<table name="Cities" prior="Entity" >
+			<comment><![CDATA[The Cities table contains information about various cities within different countries. It includes attributes such as City_ID (a unique identifier for each city), City_Name (the name of the city), Country_ID (the ID of the country to which the city belongs), and Population (the population of the city).
+The Cities table allows Airbnb to categorize accommodations based on their respective cities. It facilitates location-based search and filtering, helps users discover accommodations in specific cities, and supports analytics related to popular cities and user preferences.
+
+Separating the Locations, Countries, and Cities into distinct tables allows Airbnb to organize and manage geographic data efficiently. It enables accurate mapping of accommodations to their respective locations, simplifies search and filtering operations based on location, and provides a structured approach to handling country and city-related information throughout the platform.]]></comment>
+			<column name="City_ID" type="INT" jt="4" mandatory="y" />
+			<column name="City_Name" type="VARCHAR" length="100" jt="12" />
+			<column name="Country_ID" type="INT" length="2" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Countries.Country_ID]]></comment>
+			</column>
+			<index name="pk_Cities" unique="PRIMARY_KEY" >
+				<column name="City_ID" />
+			</index>
+		</table>
+		<table name="Commisions" prior="Entity" >
+			<comment><![CDATA[The Commissions table is responsible for storing information related to the commissions earned by Airbnb. It tracks the financial transactions and commissions associated with bookings made on the platform.
+
+The table typically includes fields such as Commission_ID (a unique identifier for each commission record), Booking_ID (a foreign key referencing the booking for which the commission is earned), Guest_Commission (the commission amount earned by Airbnb from the guest), Host_Commission (the commission amount earned by Airbnb from the host), and Total_Commission (the total commission amount earned by Airbnb for the booking).
+
+Commissions are an essential part of Airbnb's business model, where a percentage of the booking amount is charged as a commission fee. This table allows Airbnb to accurately calculate and record the commissions earned for each booking. It provides transparency and accountability in the financial transactions between guests, hosts, and the platform.
+
+By maintaining a dedicated Commissions table, Airbnb can track and analyze the financial performance, revenue generation, and commission trends over time. It also allows for efficient commission management, reporting, and payout processes.
+
+The Commissions table is essential for Airbnb to manage and track the financial aspect of its business. It provides valuable insights into revenue streams, helps in financial reporting, and ensures accurate commission calculations, contributing to the overall financial stability and success of the platform.]]></comment>
+			<column name="Commision_ID" type="INT" jt="4" mandatory="y" />
+			<column name="Booking_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Bookings.Booking_ID]]></comment>
+			</column>
+			<column name="Guest_Commision" type="MONEY" jt="3" mandatory="y" />
+			<column name="Host_Commision" type="MONEY" jt="3" mandatory="y" />
+			<column name="Total_Commision" type="MONEY" jt="3" mandatory="y" />
+			<index name="pk_Commisions" unique="PRIMARY_KEY" >
+				<column name="Commision_ID" />
+			</index>
+		</table>
+		<table name="Countries" prior="Countries_ID" >
+			<comment><![CDATA[The Countries table stores information about different countries around the world. It includes attributes such as Country_ID (a unique identifier for each country), Country_Name (the name of the country), and Country_Code (a unique code assigned to each country, such as ISO country codes).
+The Countries table provides Airbnb with a comprehensive list of countries, allowing for country-specific operations, such as filtering accommodations by country or presenting localized information to users based on their country of origin.]]></comment>
+			<column name="Country_ID" type="INT" length="2" jt="4" mandatory="y" />
+			<column name="Country_name" type="VARCHAR" length="100" jt="12" />
+			<index name="pk_Countries" unique="PRIMARY_KEY" >
+				<column name="Country_ID" />
+			</index>
+		</table>
+		<table name="Facilities" prior="Fac" >
+			<comment><![CDATA[The Facilities table stores information about the facilities available in accommodations. Each facility is assigned a unique Facility_ID. The Facility_Name field represents the name or description of the facility. The Facilities table allows accommodations to specify the amenities, services, or features they offer to guests. Examples of facilities could include swimming pool, gym, parking, Wi-Fi, etc. This table helps users to identify accommodations with specific facilities that align with their preferences or requirements.]]></comment>
+			<column name="Facility_ID" type="INT" jt="4" mandatory="y" />
+			<column name="Facility_Name" type="VARCHAR" length="100" jt="12" />
+			<index name="pk_Facilities" unique="PRIMARY_KEY" >
+				<column name="Facility_ID" />
+			</index>
+		</table>
+		<table name="Favorites" prior="Favourites" >
+			<comment><![CDATA[The Favorites table stores information about accommodations that users have marked as their favorites. It includes attributes such as User_ID (the ID of the user who added the accommodation to their favorites), Accommodation_ID (the ID of the favorite accommodation), and Favorite_Date (the date when the accommodation was added to favorites).
+The Favorites table allows users to keep track of accommodations they are interested in or considering for future bookings. It provides a convenient way for users to save and organize their preferred options, facilitating easy access and comparison.]]></comment>
+			<column name="Favorites_ID" type="INT" jt="4" mandatory="y" />
+			<column name="Guest_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Guests.Guest_ID]]></comment>
+			</column>
+			<column name="Accomodation_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Accommodations.Accommodation_ID]]></comment>
+			</column>
+			<column name="Date_Added" type="DATE" jt="91" mandatory="y" />
+			<index name="pk_Favourites" unique="PRIMARY_KEY" >
+				<column name="Favorites_ID" />
+			</index>
+		</table>
+		<table name="Guests" prior="Guest" >
+			<comment><![CDATA[The "Guests" table stores information specific to guests, including attributes such as age, gender, nationality, and preferred language. It is linked to the "Users" table through a foreign key relationship, allowing guests to have a user account with additional guest-specific details.]]></comment>
+			<column name="Guest_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Users.User_ID]]></comment>
+			</column>
+			<column name="Age" type="INT" jt="4" mandatory="y" />
+			<column name="Gender" type="VARCHAR" length="500" jt="12" mandatory="y" />
+			<column name="Nationality" type="VARCHAR" length="500" jt="12" mandatory="y" />
+			<column name="Preferred_Language" type="VARCHAR" length="500" jt="12" />
+			<index name="pk_Guests" unique="PRIMARY_KEY" >
+				<column name="Guest_ID" />
+			</index>
+		</table>
+		<table name="Host_Bank_Accounts" prior="Host_Bank" >
+			<comment><![CDATA[The Host Bank Accounts table is used by Airbnb to store information related to the bank accounts of hosts. It includes details about the financial accounts that hosts have linked to their Airbnb profiles for receiving payments.
+
+The table typically contains fields such as Host_ID (a unique identifier for each host), Bank_Name (the name of the bank associated with the account), Account_Number (the account number provided by the host), Account_Type (specifying whether it is a savings or checking account), Routing_Number (the routing number for the bank), and Account_Holder_Name (the name of the account holder).
+
+Host Bank Accounts allow hosts to receive payments for the bookings they have hosted through Airbnb. By linking their bank accounts, hosts can conveniently receive their earnings directly into their preferred financial institution. The table securely stores the necessary banking information to facilitate smooth and timely payments.
+
+Maintaining a Host Bank Accounts table enables Airbnb to accurately transfer funds to hosts' designated accounts. It streamlines the payment process, reduces the risk of errors or delays, and provides a transparent record of financial transactions between Airbnb and hosts.
+
+The Host Bank Accounts table is an essential component of Airbnb's financial infrastructure. It ensures that hosts receive their earnings promptly and reliably, enhancing their trust and satisfaction with the platform. Additionally, it allows Airbnb to maintain the necessary information for financial reporting and compliance purposes.]]></comment>
+			<column name="Host_Bank_Account_ID" type="INT" jt="4" mandatory="y" />
+			<column name="Host_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Hosts.Host_ID]]></comment>
+			</column>
+			<column name="Account_Number" type="INT" jt="4" mandatory="y" />
+			<column name="Bank_Name" type="VARCHAR" length="100" jt="12" mandatory="y" />
+			<column name="Account_Holder_Name" type="VARCHAR" length="100" jt="12" />
+			<column name="Routing_Number" type="VARCHAR" length="500" jt="12" mandatory="y" />
+			<index name="pk_Host_Bank_Accounts" unique="PRIMARY_KEY" >
+				<column name="Host_Bank_Account_ID" />
+			</index>
+		</table>
+		<table name="Hosts" prior="Host" >
+			<comment><![CDATA[The "Hosts" table stores information about the hosts registered on the platform, including their profile details, verification status, and joining date.]]></comment>
+			<column name="Host_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Users.User_ID]]></comment>
+			</column>
+			<column name="About_Me" type="TEXT" jt="-1" mandatory="y" />
+			<column name="Verification_Status" type="BOOLEAN" length="1" jt="-7" mandatory="y" />
+			<column name="Joined_Date" type="DATE" jt="91" mandatory="y" />
+			<index name="pk_Hosts" unique="PRIMARY_KEY" >
+				<column name="Host_ID" />
+			</index>
+		</table>
+		<table name="Languages" prior="Entity" >
+			<comment><![CDATA[The Languages table stores information about preferred languages of guests. It serves as a reference for the languages that guests can choose from when indicating their language preferences.
+
+The table typically includes fields such as Language_ID (a unique identifier for each language entry) and Language_Name (the name or code representing a specific language).
+
+By having a separate Languages table, the system can maintain a standardized and comprehensive list of languages. This allows users to select their preferred language from a predefined set, ensuring consistency and facilitating language-based features and functionalities within the platform. It also enables efficient language filtering and matching for accommodations, making it easier for guests to find listings that align with their language preferences.]]></comment>
+			<column name="Language_ID" type="INT" jt="4" mandatory="y" />
+			<column name="Language_Name" type="VARCHAR" length="100" jt="12" />
+			<index name="pk_Languages" unique="PRIMARY_KEY" >
+				<column name="Language_ID" />
+			</index>
+		</table>
+		<table name="Locations" prior="Entity" >
+			<comment><![CDATA[The Locations table contains information about specific locations associated with accommodations on Airbnb. It includes attributes such as Location_ID (a unique identifier for each location), Address (the street address of the location), City_ID (the ID of the city where the location is situated), and Latitude/Longitude (geographic coordinates of the location).
+The Locations table helps Airbnb organize and categorize accommodations based on their physical locations. It enables users to search for accommodations by specific addresses or geographic areas, ensuring accurate search results and location-based recommendations.]]></comment>
+			<column name="Location_ID" type="INT" jt="4" mandatory="y" />
+			<column name="Location_Name" type="VARCHAR" length="100" jt="12" />
+			<index name="pk_Entity" unique="PRIMARY_KEY" >
+				<column name="Location_ID" />
+			</index>
+		</table>
+		<table name="Messaging" prior="Mess" >
+			<comment><![CDATA[The Messaging table is responsible for storing conversations and messages exchanged between users within the platform. It facilitates real-time communication and allows users to engage in private conversations.
+
+The table typically consists of fields such as Message_ID (a unique identifier for each message), Sender_ID (a foreign key referencing the user who sent the message), Recipient_ID (a foreign key referencing the user who received the message), Message_Content (the actual text or content of the message), and Message_Date (a timestamp indicating when the message was sent).
+
+Messaging functionality enables users to communicate with each other, discuss booking details, ask questions, provide support, or engage in any other form of conversation. It provides a private and secure channel for direct communication between users, enhancing the overall user experience and facilitating smooth interactions.
+
+By storing messages in a dedicated table, the platform can maintain a record of conversations, enabling users to view their message history, refer back to previous discussions, or track important information shared during the conversation.
+
+The Messaging table is crucial for enabling communication between users, fostering connections, and facilitating effective collaboration within the platform. It plays a vital role in enhancing the overall user experience and promoting seamless interaction between users.]]></comment>
+			<column name="Message_ID" type="INT" jt="4" mandatory="y" />
+			<column name="Sender_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Users.User_ID]]></comment>
+			</column>
+			<column name="Receiver_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Users.User_ID]]></comment>
+			</column>
+			<column name="Message_Content" type="TEXT" jt="-1" mandatory="y" />
+			<column name="Message_Date" type="DATE" jt="91" mandatory="y" />
+			<index name="pk_Messaging" unique="PRIMARY_KEY" >
+				<column name="Message_ID" />
+			</index>
+		</table>
+		<table name="Notifications" prior="Entity" >
+			<comment><![CDATA[The Notifications table stores information about notifications sent to users within the platform. It tracks the notifications generated by the system or other users and provides a means to deliver them to the intended recipients.
+
+The table typically includes fields such as Notification_ID (a unique identifier for each notification), User_ID (a foreign key referencing the recipient user), Notification_Message (the content or text of the notification), and Notification_Date (the timestamp indicating when the notification was sent).
+
+Notifications can include various types of messages, such as booking confirmations, payment reminders, review requests, or general updates from the platform. By storing these notifications in a dedicated table, the platform can keep a record of all sent notifications, allowing users to view their notification history or revisit important messages.
+
+The Notifications table plays a crucial role in facilitating communication and providing important information to users. It enables the platform to send timely notifications, enhancing user engagement, and improving the overall user experience. Additionally, it can serve as a basis for implementing notification preferences and settings, allowing users to customize their notification preferences and manage their communication preferences within the platform.]]></comment>
+			<column name="Notification_ID" type="INT" jt="4" mandatory="y" />
+			<column name="User_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Users.User_ID]]></comment>
+			</column>
+			<column name="Notification_Message" type="TEXT" jt="-1" mandatory="y" />
+			<column name="Notification_Date" type="DATE" jt="91" mandatory="y" />
+			<index name="pk_Notifications" unique="PRIMARY_KEY" >
+				<column name="Notification_ID" />
+			</index>
+		</table>
+		<table name="Payments" prior="Entity" >
+			<comment><![CDATA[The Payments table stores information about the payments made for bookings on Airbnb. It includes details such as Payment_ID (a unique identifier for each payment), Booking_ID (the ID of the corresponding booking), User_ID (the ID of the user making the payment), Payment_Method (the method used for payment, e.g., credit card, PayPal), Amount (the payment amount), Payment_Date, and Payment_Status (indicating the status of the payment, e.g., pending, completed).
+The Payments table allows Airbnb to track and manage payment transactions, ensuring secure and reliable payment processing for guests and hosts. It enables the generation of payment receipts, facilitates financial reporting, and supports refund processing when necessary.]]></comment>
+			<column name="Payment_ID" type="INT" jt="4" mandatory="y" />
+			<column name="Booking_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Bookings.Booking_ID]]></comment>
+			</column>
+			<column name="Amount" type="MONEY" jt="3" />
+			<column name="Payment_Date" type="DATE" jt="91" />
+			<column name="Payment_Method" type="VARCHAR" length="50" jt="12" />
+			<index name="pk_Payments" unique="PRIMARY_KEY" >
+				<column name="Payment_ID" />
+			</index>
+		</table>
+		<table name="Photos" prior="Entity" >
+			<comment><![CDATA[The Photos table stores information about the photos associated with accommodations. Each photo is identified by a unique Photo_ID and is linked to a specific Accommodation_ID. The Photo_Link field contains the URL or file path of the photo. The Photos table allows hosts to showcase images of their accommodations, giving potential guests a visual representation of the property. This table facilitates the storage and retrieval of photos, enabling users to view and assess the visual appeal of the accommodations before making a booking decision.]]></comment>
+			<column name="Photo_ID" type="INT" jt="4" mandatory="y" />
+			<column name="Accomodation_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Accommodations.Accommodation_ID]]></comment>
+			</column>
+			<column name="Photo_Link" type="VARCHAR" length="500" jt="12" />
+			<index name="pk_Photos" unique="PRIMARY_KEY" >
+				<column name="Photo_ID" />
+			</index>
+		</table>
+		<table name="Ratings" prior="Entity" >
+			<comment><![CDATA[The Ratings table contains information about specific ratings provided by users for various aspects of accommodations. It includes attributes such as Rating_ID (a unique identifier for each rating), Accommodation_ID (the ID of the accommodation being rated), Cleanliness_Rating, Location_Rating, Value_Rating, and so on.
+The Ratings table allows users to provide separate ratings for different aspects of accommodations, providing a more detailed and comprehensive evaluation. It enables Airbnb to calculate average ratings for different attributes, helps users compare accommodations based on specific criteria, and supports personalized recommendations based on individual preferences.]]></comment>
+			<column name="Rating_ID" type="INT" jt="4" mandatory="y" />
+			<column name="Accomodation_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Accommodations.Accommodation_ID]]></comment>
+			</column>
+			<column name="Host_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Hosts.Host_ID]]></comment>
+			</column>
+			<column name="Overall_Rating" type="DECIMAL" length="2" decimal="2" jt="3" mandatory="y" />
+			<index name="pk_Ratings" unique="PRIMARY_KEY" >
+				<column name="Rating_ID" />
+			</index>
+		</table>
+		<table name="Reviews" prior="Entity" >
+			<comment><![CDATA[The Reviews table stores information about user reviews for accommodations on Airbnb. It includes attributes such as Review_ID (a unique identifier for each review), Accommodation_ID (the ID of the accommodation being reviewed), User_ID (the ID of the user who wrote the review), Rating (a numerical rating given by the user), and Review_Date (the date when the review was submitted).
+The Reviews table captures user feedback and opinions about accommodations, allowing other users to make informed decisions when booking. It facilitates review-based sorting and filtering, helps calculate overall ratings for accommodations, and supports analytics related to customer satisfaction and sentiment analysis.]]></comment>
+			<column name="Review_ID" type="INT" jt="4" mandatory="y" />
+			<column name="Guest_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Guests.Guest_ID]]></comment>
+			</column>
+			<column name="Accomodation_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Accommodations.Accommodation_ID]]></comment>
+			</column>
+			<column name="Rating" type="DECIMAL" length="2" decimal="2" jt="3" mandatory="y" />
+			<column name="Comment" type="TEXT" jt="-1" />
+			<column name="Review_Date" type="DATE" jt="91" mandatory="y" />
+			<index name="pk_Reviews" unique="PRIMARY_KEY" >
+				<column name="Review_ID" />
+			</index>
+		</table>
+		<table name="Reviews_Comments" prior="Entity" >
+			<comment><![CDATA[The Review Comments table contains comments or textual feedback provided by users within their reviews. It includes attributes such as Comment_ID (a unique identifier for each comment), Review_ID (the ID of the review to which the comment belongs), User_ID (the ID of the user who wrote the comment), and Comment_Text (the actual text of the comment).
+The Review Comments table captures additional textual information within user reviews, allowing users to express their opinions and provide detailed feedback. It enhances the richness of review data, facilitates sentiment analysis and text mining, and supports features such as keyword-based searching and sentiment-based filtering.
+
+By separating Reviews, Ratings, User Ratings, and Review Comments into distinct tables, Airbnb can organize and manage user feedback and evaluation data efficiently. It enables comprehensive analysis and reporting on accommodation quality, user reputation, and community dynamics, enhancing the overall user experience on the platform.]]></comment>
+			<column name="Review_Comment_ID" type="INT" jt="4" mandatory="y" />
+			<column name="Review_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Reviews.Review_ID]]></comment>
+			</column>
+			<column name="Comment_Text" type="TEXT" jt="-1" mandatory="y" />
+			<column name="Comment_Date" type="DATE" jt="91" mandatory="y" />
+			<index name="pk_Reviews_Comments" unique="PRIMARY_KEY" >
+				<column name="Review_Comment_ID" />
+			</index>
+		</table>
+		<table name="Rules" prior="Entity" >
+			<comment><![CDATA[The Rules table contains a list of rules associated with accommodations. Each rule is identified by a unique Rule_ID and is described by a Rule_Description. This table provides information about the policies and regulations that guests must adhere to while staying at an accommodation. Examples of rules may include no smoking, no pets allowed, quiet hours, or specific check-in/check-out times. The Rules table helps hosts communicate their expectations to guests and ensures a pleasant and harmonious stay for all parties involved.]]></comment>
+			<column name="Rule_ID" type="INT" jt="4" mandatory="y" />
+			<column name="Rule_Description" type="TEXT" jt="-1" />
+			<index name="pk_Rules" unique="PRIMARY_KEY" >
+				<column name="Rule_ID" />
+			</index>
+		</table>
+		<table name="Social_Media" prior="Social Media" >
+			<comment><![CDATA[The Social_Media table stores information about social media profiles linked to user profiles. It allows users to connect and showcase their social media presence within the platform. Each entry in the table represents a specific social media profile associated with a user.
+
+The table typically includes fields such as Social_Media_ID (a unique identifier for each social media entry), User_ID (a foreign key referencing the User table), Social_Media_Type (indicating the type of social media platform, e.g., Facebook, Twitter, Instagram), and Profile_Link (the URL or handle of the user's social media profile).
+
+By linking social media profiles to user accounts, the Social_Media table facilitates social connectivity and networking among users. It provides an avenue for users to share and discover more about each other's online presence, fostering a sense of community within the platform.]]></comment>
+			<column name="Social_Media_ID" type="INT" jt="4" mandatory="y" />
+			<column name="User_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Users.User_ID]]></comment>
+			</column>
+			<column name="Social_Media_Type" type="VARCHAR" length="500" jt="12" />
+			<column name="Profile_Link" type="VARCHAR" length="500" jt="12" />
+			<index name="pk_Social_Media" unique="PRIMARY_KEY" >
+				<column name="Social_Media_ID" />
+			</index>
+		</table>
+		<table name="Special_Offers" prior="Special" >
+			<comment><![CDATA[The Special Offers table is used by Airbnb to manage and track special deals, discounts, or promotional offers provided to guests for accommodations. It stores information about the specific offers available and the associated accommodations.
+
+The table typically includes fields such as Offer_ID (a unique identifier for each special offer), Accommodation_ID (a foreign key referencing the accommodation to which the offer applies), Start_Date (the start date of the offer), End_Date (the end date of the offer), Discount_Percentage (the percentage of discount offered), and Terms (any terms and conditions associated with the offer).
+
+Special Offers allow hosts to attract guests by providing discounted rates or additional benefits for specific periods or circumstances. The table helps Airbnb keep track of active offers, their validity periods, and the accommodations eligible for those offers. It facilitates the process of applying and managing discounts for guests during the booking process.
+
+By maintaining a Special Offers table, Airbnb can easily manage and update promotional campaigns, monitor the performance of different offers, and analyze the impact of discounts on booking rates and revenue. It provides a structured approach to offering incentives to guests and helps in driving bookings and customer satisfaction.
+
+The Special Offers table plays a crucial role in Airbnb's marketing and sales strategies by allowing hosts to create attractive deals and promotions. It enhances the overall booking experience for guests and encourages them to choose accommodations that provide added value or cost savings.]]></comment>
+			<column name="Offer_ID" type="INT" jt="4" mandatory="y" />
+			<column name="Accomodation_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Accommodations.Accommodation_ID]]></comment>
+			</column>
+			<column name="Offer_Title" type="VARCHAR" length="500" jt="12" mandatory="y" />
+			<column name="Offer_Description" type="VARCHAR" length="500" jt="12" />
+			<column name="Offer_Discount" type="DECIMAL" jt="3" mandatory="y" />
+			<column name="Offer_Expiration_Date" type="DATE" jt="91" mandatory="y" />
+			<index name="pk_Special_Offers" unique="PRIMARY_KEY" >
+				<column name="Offer_ID" />
+			</index>
+		</table>
+		<table name="Tags" prior="Entity" >
+			<comment><![CDATA[The Tags table stores information about the tags or labels associated with accommodations. Each tag is assigned a unique Tag_ID and is linked to a specific Accommodation_ID. The Tag_Name field represents the name or label of the tag. The Tags table allows accommodations to be categorized and identified based on various attributes or characteristics. Tags can be used to indicate specific features, amenities, or themes associated with an accommodation, making it easier for users to search, filter, and identify accommodations that meet their preferences or requirements.]]></comment>
+			<column name="Tag_ID" type="INT" jt="4" mandatory="y" />
+			<column name="Accomodation_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Accommodations.Accommodation_ID]]></comment>
+			</column>
+			<column name="Tag_Name" type="VARCHAR" length="100" jt="12" mandatory="y" />
+			<index name="pk_Tags" unique="PRIMARY_KEY" >
+				<column name="Tag_ID" />
+			</index>
+		</table>
+		<table name="User_Ratings" prior="Entity" >
+			<comment><![CDATA[The User Ratings table stores information about ratings provided by one user for another user. It includes attributes such as Rating_ID (a unique identifier for each rating), Rated_User_ID (the ID of the user being rated), Rating_User_ID (the ID of the user who provided the rating), and Rating (the numerical rating given by the rating user).
+The User Ratings table facilitates the evaluation of user behavior and trustworthiness within the Airbnb community. It allows users to rate and review their interactions with other users, providing a system of accountability and building trust among participants. It supports features such as user reputation scores, trust badges, and recommendations based on past experiences.]]></comment>
+			<column name="Rating_ID" type="INT" jt="4" mandatory="y" />
+			<column name="Rated_User_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Users.User_ID]]></comment>
+			</column>
+			<column name="Rating Type" type="VARCHAR" length="5" jt="12" mandatory="y" >
+				<comment><![CDATA[Host or Guest]]></comment>
+			</column>
+			<column name="Rating_Value" type="DECIMAL" length="2" decimal="2" jt="3" mandatory="y" />
+			<index name="pk_User_Ratings" unique="PRIMARY_KEY" >
+				<column name="Rating_ID" />
+			</index>
+		</table>
+		<table name="Users" prior="Guest" >
+			<comment><![CDATA[The "Users" table stores information about registered users, including their basic profile information such as name, email, password, and contact information. It also includes an optional field for a profile picture and the option to link their profile to social media accounts.]]></comment>
+			<column name="User_ID" type="INT" jt="4" mandatory="y" />
+			<column name="Name" type="VARCHAR" length="100" jt="12" mandatory="y" />
+			<column name="Email" type="VARCHAR" length="500" jt="12" mandatory="y" />
+			<column name="Password" type="VARCHAR" length="500" jt="12" mandatory="y" />
+			<column name="Profile_Picture" type="VARCHAR" length="500" jt="12" />
+			<column name="Phone_Number" type="VARCHAR" length="500" jt="12" mandatory="y" />
+			<column name="Social_Media_ID" type="INT" jt="4" />
+			<index name="pk_Guest" unique="PRIMARY_KEY" >
+				<column name="User_ID" />
+			</index>
+		</table>
+		<table name="Verifications" prior="Verification Status" >
+			<comment><![CDATA[The Verifications table stores information about host verification statuses. It maintains records of the different verification statuses that hosts can have within the platform.
+
+The table typically includes fields such as Verification_ID (a unique identifier for each verification entry) and Verification_Status (a description or code representing the verification status).
+
+The Verifications table helps ensure the credibility and trustworthiness of hosts by providing a system for verifying their identity or other relevant information. It can include various verification methods such as email verification, phone verification, ID verification, or social media verification.
+
+By maintaining a separate Verifications table, the platform can keep track of the verification status for each host. This information can be used for displaying verified badges or icons on host profiles, allowing guests to make informed decisions when choosing accommodations. It also helps in implementing verification-related features and policies within the platform to enhance security and user trust.]]></comment>
+			<column name="Verification_ID" type="INT" jt="4" mandatory="y" />
+			<column name="Verification_Status" type="CHAR" length="1" jt="1" mandatory="y" />
+			<index name="pk_Verifications" unique="PRIMARY_KEY" >
+				<column name="Verification_ID" />
+			</index>
+		</table>
+		<table name="Wishlists" prior="Entity" >
+			<comment><![CDATA[The Wishlist table captures users' wishlists, which are collections of accommodations they desire to stay at or explore further. It includes attributes such as User_ID (the ID of the user who created the wishlist), Wishlist_ID (a unique identifier for each wishlist), and Wishlist_Name (a name or description for the wishlist).
+The Wishlist table allows users to curate and manage personalized lists of accommodations they aspire to experience. It provides a platform for users to plan their trips, gather inspiration, and share their travel aspirations with others.
+
+Both the Favorites and Wishlist tables contribute to enhancing the user experience by enabling users to save and organize their preferred accommodations in a way that suits their needs and preferences. These features assist users in keeping track of their interests, simplifying the booking process, and providing a personalized and tailored experience on the Airbnb platform.]]></comment>
+			<column name="Wishlist_ID" type="INT" jt="4" mandatory="y" />
+			<column name="Guest_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Guests.Guest_ID]]></comment>
+			</column>
+			<column name="Accomodation_ID" type="INT" jt="4" mandatory="y" >
+				<comment><![CDATA[Foreign Key to Accommodations.Accommodation_ID]]></comment>
+			</column>
+			<index name="pk_Wishlists" unique="PRIMARY_KEY" >
+				<column name="Wishlist_ID" />
+			</index>
+		</table>
+	</schema>
+	<layout name="Default Layout" id="Layout-2706" joined_routing="y" show_relation="columns" >
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Accomodations" color="D8EEC1" x="688" y="224" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Amenities" color="D8EEC1" x="896" y="112" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Booking_Extensions" color="3941C1" x="1216" y="736" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Bookings" color="3941C1" x="976" y="528" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Cancellations" color="3941C1" x="1216" y="608" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Cities" color="D8EEC1" x="1440" y="240" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Commisions" color="EEC6C1" x="688" y="928" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Countries" color="D8EEC1" x="1440" y="144" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Facilities" color="D8EEC1" x="1088" y="224" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Favorites" color="EEEBC1" x="1648" y="896" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Guests" color="C1D8EE" x="256" y="368" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Host_Bank_Accounts" color="EEC6C1" x="1136" y="928" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Hosts" color="C1D8EE" x="256" y="240" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Languages" color="C1D8EE" x="144" y="576" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Locations" color="D8EEC1" x="1440" y="48" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Messaging" color="EEC1E6" x="512" y="736" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Notifications" color="EEC1E6" x="288" y="736" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Payments" color="3941C1" x="1216" y="464" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Photos" color="D8EEC1" x="896" y="304" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Ratings" color="EEEBC1" x="1776" y="480" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Reviews" color="EEEBC1" x="1568" y="528" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Reviews_Comments" color="EEEBC1" x="1936" y="608" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Rules" color="D8EEC1" x="896" y="208" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Social_Media" color="EEC1E6" x="64" y="736" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Special_Offers" color="EEC6C1" x="880" y="928" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Tags" color="D8EEC1" x="1088" y="112" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="User_Ratings" color="EEEBC1" x="1776" y="624" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Users" color="C1D8EE" x="48" y="272" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Verifications" color="C1D8EE" x="352" y="576" />
+		<entity schema="Logical_Design_(DLBDSPBDM01).INSTANCE" name="Wishlists" color="EEEBC1" x="1856" y="896" />
+		<callout x="64" y="64" pointer="Round" >
+			<comment><![CDATA[This is a layout - a diagram with tools.
+- Create new entities by right-clicking the layout. 
+- Double-click entity headers to edit.
+- For a better understanding of the schema, create multiple layouts.
+- Deploy the model into the database by converting it first to the physical design.]]></comment>
+		</callout>
+	</layout>
+</project>
